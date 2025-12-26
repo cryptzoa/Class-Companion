@@ -38,6 +38,9 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Expose port (Documentation only, Railway overrides this)
 EXPOSE 8080
 
-# Start Laravel Server
-# Using shell form to allow variable expansion of $PORT
-CMD php artisan optimize && php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+# Start Laravel Server with automatic migration
+CMD php artisan migrate --force && \
+    php artisan filament:upgrade && \
+    php artisan storage:link && \
+    php artisan optimize && \
+    php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
