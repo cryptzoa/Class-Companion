@@ -30,8 +30,8 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 # Copy Config Files
-COPY backend/nginx.conf /etc/nginx/nginx.conf
-COPY backend/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
