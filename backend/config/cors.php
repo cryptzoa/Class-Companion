@@ -12,10 +12,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'https://class-companion-three.vercel.app',
-        'http://localhost:3000',
-    ],
+    'allowed_origins' => explode(',', env('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,https://class-companion-three.vercel.app')),
 
     'allowed_origins_patterns' => [],
 
