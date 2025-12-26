@@ -1,4 +1,4 @@
-FROM php:8.3-cli
+FROM php:8.3-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libicu-dev \
     zip \
-    unzip
+    unzip \
+    nginx \
+    supervisor
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -27,20 +29,22 @@ WORKDIR /var/www/html
 # Copy existing application directory contents
 COPY . /var/www/html
 
+# Copy Config Files
+COPY backend/nginx.conf /etc/nginx/nginx.conf
+COPY backend/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Change current user to www (optional for CLI but good practice if we switched to FPM later)
-# For simple CLI serve, running as root within container is often default and fine for this context, 
-# but let's keep permission fix for storage
+# Change permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port (Documentation only, Railway overrides this)
+# Expose port 8080 (Matches nginx.conf)
 EXPOSE 8080
 
-# Start Laravel Server with automatic migration
+# Start Supervisor (which starts Nginx and PHP-FPM)
 CMD php artisan migrate --force && \
     php artisan filament:upgrade && \
     php artisan storage:link && \
     php artisan optimize && \
-    php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+    /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
