@@ -33,11 +33,8 @@ RUN composer install --no-dev --optimize-autoloader
 # Change current user to www
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Manually disable conflicting MPMs and enable prefork
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.load \
-    && rm -f /etc/apache2/mods-enabled/mpm_event.conf \
-    && rm -f /etc/apache2/mods-enabled/mpm_worker.load \
-    && rm -f /etc/apache2/mods-enabled/mpm_worker.conf \
+# Manually disable conflicting MPMs by removing all mpm symlinks first
+RUN rm -f /etc/apache2/mods-enabled/mpm_*.load /etc/apache2/mods-enabled/mpm_*.conf \
     && a2enmod mpm_prefork rewrite
 
 # Update Apache config to point to public folder
