@@ -33,9 +33,12 @@ RUN composer install --no-dev --optimize-autoloader
 # Change current user to www
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Enable Apache mod_rewrite
-RUN a2dismod mpm_event mpm_worker || true
-RUN a2enmod rewrite
+# Manually disable conflicting MPMs and enable prefork
+RUN rm -f /etc/apache2/mods-enabled/mpm_event.load \
+    && rm -f /etc/apache2/mods-enabled/mpm_event.conf \
+    && rm -f /etc/apache2/mods-enabled/mpm_worker.load \
+    && rm -f /etc/apache2/mods-enabled/mpm_worker.conf \
+    && a2enmod mpm_prefork rewrite
 
 # Update Apache config to point to public folder
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
