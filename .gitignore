@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Laravel
+/backend/storage/*.key
+/backend/storage/framework/cache/data/*
+/backend/storage/framework/sessions/*
+/backend/storage/framework/views/*
+/backend/storage/logs/*.log
+/backend/public/hot
+/backend/public/storage
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
